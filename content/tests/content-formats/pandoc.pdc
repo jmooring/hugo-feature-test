@@ -1,0 +1,19 @@
+---
+title: Pandoc
+date: 2025-04-24T08:15:42-07:00
+summary: This page tests the Pandoc content format.
+cascade:
+  - build:
+      render: never
+      list: never
+    target:
+      environment: skip-external-renderers
+---
+
+This is a superscript in Pandoc markup:
+
+> `2^10^`
+
+This is how it renders:
+
+> 2^10^

@@ -1,0 +1,19 @@
+---
+title: AsciiDoc
+date: 2025-04-24T08:15:26-07:00
+summary: This page tests the AsciiDoc content format.
+cascade:
+  - build:
+      render: never
+      list: never
+    target:
+      environment: skip-external-renderers
+---
+
+This is a subscript in AsciiDoc markup:
+
+> `+H~2~O+`
+
+This is how it renders:
+
+> H~2~O

@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <h1>{{ .Title }}</h1>
+  {{ .Content }}
+
+  {{ $env := "skip-external-renderers" }}
+  {{ if eq hugo.Environment "skip-external-renderers" }}
+  <p>
+    We are skkipping the AsciiDoc, Pandoc, and reStructuredText tests.<br>
+    The current <code>environment</code> is  <code>{{ $env }}</code>.
+  </p>
+  {{ end }}
+
+  {{ range .Pages.ByTitle }}
+    <h2><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></h2>
+    {{ .Content }}
+  {{ end }}
+{{ end }}
