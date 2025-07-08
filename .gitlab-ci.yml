@@ -4,7 +4,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   TZ: America/Los_Angeles
 image:
-  name: veriphor/hugo:0.147.0
+  name: veriphor/hugo:0.148.0
 
 pages:
   stage: deploy

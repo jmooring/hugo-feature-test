@@ -5,7 +5,7 @@
   {{ partial "terms.html" (dict "taxonomy" "tags" "page" .) }}
 
   {{ range resources.ByType "image" }}
-    {{ with .Process "fill 250x150 webp" }}
+    {{ with .Process "wepb" }}
       <img src="{{ .RelPermalink }}" width="{{ .Width }}" height="{{ .Height }}" alt="">
     {{ end }}
   {{ end }}
