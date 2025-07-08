@@ -31,7 +31,7 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
-    container: veriphor/hugo:0.147.0
+    container: veriphor/hugo:0.148.0
     env:
       TZ: America/Los_Angeles
     steps:
