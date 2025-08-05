@@ -1,0 +1,45 @@
+variables:
+  # Git
+  GIT_DEPTH: 0
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
+  # Time zone
+  TZ: Europe/Oslo
+  # Environment for Hugo to use external converters
+  HUGO_ENVIRONMENT: with-external-converters
+image:
+  name: veriphor/hugo:0.163.3
+pages:
+  stage: deploy
+  script:
+    - |
+      # Verify installations
+      echo "Verifying installations..."
+      echo "Dart Sass: $(sass --version)"
+      echo "Go: $(go version)"
+      echo "Hugo: $(hugo version)"
+      echo "Node.js: $(node --version)"
+      echo "brotli: $(brotli --version)"
+      echo "xz: $(xz --version)"
+      echo "zstd: $(zstd --version)"
+
+      # Install Node.js dependencies
+      if [ -f package-lock.json ]; then
+        echo "Installing Node.js dependencies..."
+        npm ci
+      fi
+
+      # Build site
+      echo "Building site..."
+      hugo --gc --minify --baseURL "${CI_PAGES_URL}"
+
+      # Compress published files
+      echo "Compressing published files..."
+      find public/ -type f -regextype posix-extended -regex '.+\.(css|html|js|json|mjs|svg|txt|xml)$' -print0 > files.txt
+      time xargs --null --max-procs=0 --max-args=1 brotli --quality=10 --force --keep < files.txt
+      time xargs --null --max-procs=0 --max-args=1 gzip -9 --force --keep < files.txt
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
