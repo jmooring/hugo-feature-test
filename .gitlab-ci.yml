@@ -1,0 +1,30 @@
+variables:
+  # Git
+  GIT_DEPTH: 0
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
+  # Time zone
+  TZ: Europe/Oslo
+image:
+  name: veriphor/hugo:0.148.2
+pages:
+  stage: deploy
+  script:
+    # Install Node.js dependencies
+    - echo "Installing Node.js dependencies..."
+    - "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --prefer-offline || true"
+
+    # Build the site
+    - echo "Building the site..."
+    - hugo --gc --minify --baseURL "${CI_PAGES_URL}"
+
+    # Compress published files
+    - echo "Compressing published files..."
+    - find public/ -type f -regextype posix-extended -regex '.+\.(css|html|js|json|mjs|svg|txt|xml)$' -print0 > files.txt
+    - time xargs --null --max-procs=0 --max-args=1 brotli --quality=10 --force --keep < files.txt
+    - time xargs --null --max-procs=0 --max-args=1 gzip -9 --force --keep < files.txt
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
