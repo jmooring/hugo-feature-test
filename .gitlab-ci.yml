@@ -1,0 +1,69 @@
+variables:
+  # Set the build timezone
+  TZ: Europe/Oslo
+
+  # Set the build cache directory
+  HUGO_CACHEDIR: ${CI_PROJECT_DIR}/.cache/hugo
+
+  # Set the Hugo environment to use external converters
+  HUGO_ENVIRONMENT: with-external-converters
+
+  # Set the repository clone and fetch strategy
+  GIT_DEPTH: 0
+  GIT_STRATEGY: clone
+  GIT_SUBMODULE_STRATEGY: recursive
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  fallback_keys:
+    - ${CI_DEFAULT_BRANCH}
+  paths:
+    - .cache/hugo
+image:
+  name: veriphor/hugo:0.165.0
+pages:
+  stage: deploy
+  script:
+    - |
+      # Log tool versions
+      echo "Logging tool versions..."
+      command -v sass &> /dev/null && echo "Dart Sass: $(sass --version)" || echo "Dart Sass: not installed"
+      command -v go &> /dev/null && echo "Go: $(go version)" || echo "Go: not installed"
+      command -v hugo &> /dev/null && echo "Hugo: $(hugo version)" || echo "Hugo: not installed"
+      command -v node &> /dev/null && echo "Node.js: $(node --version)" || echo "Node.js: not installed"
+
+      # Configure Git
+      echo "Configuring Git..."
+      git config --global core.quotepath false
+
+      # Fetch full Git history
+      if [[ $(git rev-parse --is-shallow-repository) == true ]]; then
+        echo "Fetching full Git history..."
+        git fetch --unshallow
+      fi
+
+      # Initialize Git submodules
+      if [[ -f .gitmodules ]]; then
+        echo "Initializing Git submodules..."
+        git submodule update --init --recursive
+      fi
+
+      # Install Node.js dependencies
+      if [[ -f package-lock.json ]]; then
+        echo "Installing Node.js dependencies..."
+        npm ci
+      fi
+
+      # Build the project
+      echo "Building the project..."
+      hugo build --gc --minify --baseURL "${CI_PAGES_URL}"
+
+      # Compress published files
+      echo "Compressing published files..."
+      find public/ -type f -regextype posix-extended -regex '.+\.(cjs|css|html|js|json|mjs|svg|txt|xml)$' -print0 > "/tmp/files.txt"
+      xargs --null --max-procs=0 --max-args=1 brotli --quality=10 --force --keep < "/tmp/files.txt"
+      xargs --null --max-procs=0 --max-args=1 gzip -9 --force --keep < "/tmp/files.txt"
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
