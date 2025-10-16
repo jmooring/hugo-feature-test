@@ -15,10 +15,10 @@ enableGitInfo        = true
 # -----------------------------------------------------------------------------
 
 [markup.goldmark.renderHooks.image]
-  enableDefault = true
+  useEmbedded = 'always'
 
 [markup.goldmark.renderHooks.link]
-  enableDefault = true
+  useEmbedded = 'always'
 
 # -----------------------------------------------------------------------------
 # Menus
