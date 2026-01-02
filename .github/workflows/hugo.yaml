@@ -17,7 +17,7 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: veriphor/hugo:0.153.5
+    container: veriphor/hugo:0.154.2
     env:
       TZ: Europe/Oslo
     steps:
