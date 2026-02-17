@@ -17,7 +17,7 @@ defaults:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: veriphor/hugo:0.155.1
+    container: veriphor/hugo:0.155.3
     env:
       TZ: Europe/Oslo
     steps:
@@ -34,7 +34,7 @@ jobs:
           [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true
       - name: Build with Hugo
         run: |
-          hugo --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
+          hugo build --gc --minify --baseURL "${{ steps.pages.outputs.base_url }}/"
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
