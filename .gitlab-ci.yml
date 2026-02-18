@@ -6,7 +6,7 @@ variables:
   # Time zone
   TZ: Europe/Oslo
 image:
-  name: veriphor/hugo:0.155.3
+  name: veriphor/hugo:0.156.0
 pages:
   stage: deploy
   script:
