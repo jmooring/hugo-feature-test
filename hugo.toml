@@ -1,7 +1,7 @@
-baseURL              = 'https://example.org/'
-languageCode         = 'en-US'
-title                = 'Hugo Feature Test'
-enableGitInfo        = true
+baseURL       = 'https://example.org/'
+locale        = 'en-US'
+title         = 'Hugo Feature Test'
+enableGitInfo = true
 
 # -----------------------------------------------------------------------------
 # Caches
