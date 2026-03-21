@@ -10,19 +10,30 @@ image:
 pages:
   stage: deploy
   script:
-    # Install Node.js dependencies
-    - echo "Installing Node.js dependencies..."
-    - "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --prefer-offline || true"
+    - |
+      # Verify installations
+      echo "Verifying installations..."
+      echo "Dart Sass: $(sass --version)"
+      echo "Go: $(go version)"
+      echo "Hugo: $(hugo version)"
+      echo "Node.js: $(node --version)"
+      echo "brotli: $(brotli --version)"
+      echo "xz: $(xz --version)"
+      echo "zstd: $(zstd --version)"
 
-    # Build the site
-    - echo "Building the site..."
-    - hugo build --gc --minify --baseURL "${CI_PAGES_URL}"
+      # Install Node.js dependencies
+      echo "Installing Node.js dependencies..."
+      [[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci --prefer-offline || true
 
-    # Compress published files
-    - echo "Compressing published files..."
-    - find public/ -type f -regextype posix-extended -regex '.+\.(css|html|js|json|mjs|svg|txt|xml)$' -print0 > files.txt
-    - time xargs --null --max-procs=0 --max-args=1 brotli --quality=10 --force --keep < files.txt
-    - time xargs --null --max-procs=0 --max-args=1 gzip -9 --force --keep < files.txt
+      # Build site
+      echo "Building site..."
+      hugo --gc --minify --baseURL "${CI_PAGES_URL}"
+
+      # Compress published files
+      echo "Compressing published files..."
+      find public/ -type f -regextype posix-extended -regex '.+\.(css|html|js|json|mjs|svg|txt|xml)$' -print0 > files.txt
+      time xargs --null --max-procs=0 --max-args=1 brotli --quality=10 --force --keep < files.txt
+      time xargs --null --max-procs=0 --max-args=1 gzip -9 --force --keep < files.txt
   artifacts:
     paths:
       - public
