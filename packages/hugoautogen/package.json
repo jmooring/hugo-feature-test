@@ -1,7 +1,7 @@
 {
   "dependencies": {},
   "devDependencies": {
-    "@babel/cli": "^8.0.6",
+    "@babel/cli": "^8.1.0",
     "@babel/core": "^8.0.7",
     "@babel/preset-env": "^8.0.7",
     "@tailwindcss/cli": "^4.3.3",
